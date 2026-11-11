@@ -1,0 +1,107 @@
+Text Segment
+0x00400000  0x3c011001  lui $1,4097           4    main:	la $t1, vet		#pega o endere o da primeira pos de vet
+0x00400004  0x3429000c  ori $9,$1,12               
+0x00400008  0x3c011001  lui $1,4097           5    	la $t2, n		#endere o do valor de n
+0x0040000c  0x342a0000  ori $10,$1,0               
+0x00400010  0x8d4a0000  lw $10,0($10)         6    	lw $t2, 0($t2)		#coloca o valor de n em $t2
+0x00400014  0x3c011001  lui $1,4097           12   mediaInicio:	la $t7, media	#pega o endere o de media
+0x00400018  0x342f0004  ori $15,$1,4               
+0x0040001c  0x016b5826  xor $11,$11,$11       13   	xor $t3, $t3, $t3	#inicializa a vari vel para alocar o valor de media, j  que o endere o de media precisa ser salvo
+0x00400020  0x018c6026  xor $12,$12,$12       14   	xor $t4, $t4, $t4	#inicializa o i com 0
+0x00400024  0x01ad6826  xor $13,$13,$13       15   	xor $t5, $t5, $t5	#variavel para armazenar o valor de t1[i]
+0x00400028  0x01ce7026  xor $14,$14,$14       16   	xor $t6, $t6, $t6	#inicializa a variavel que armazena o endere o inicial do vet
+0x0040002c  0x01207021  addu $14,$9,$0        17   	addu $t6, $t1, $0	#armazena o endere o inicial do vet	
+0x00400030  0x118a0009  beq $12,$10,9         21   	beq $t4, $t2, calculaMedia	#confere se o valor de i   igual do que n
+0x00400034  0x8dcd0000  lw $13,0($14)         22   	lw $t5, 0($t6)		#carrega em t5 o valor de de vet[t6]
+0x00400038  0x016d5821  addu $11,$11,$13      23   	addu $t3, $t3, $t5	#se n o ent o soma o valor atual de m dia com o vetor na pos do endere o
+0x0040003c  0x3c010000  lui $1,0              24   	addu $t4, $t4, 1		#incrementa i
+0x00400040  0x34210001  ori $1,$1,1                
+0x00400044  0x01816021  addu $12,$12,$1            
+0x00400048  0x3c010000  lui $1,0              25   	addu $t6, $t6, 4		#incrementa o endere o de t6
+0x0040004c  0x34210004  ori $1,$1,4                
+0x00400050  0x01c17021  addu $14,$14,$1            
+0x00400054  0x0810000c  j 0x00400030          27   	j mediaLoop		#volta para o loop
+0x00400058  0x01608821  addu $17,$11,$0       31   	addu $s1, $t3, $0
+0x0040005c  0x01408021  addu $16,$10,$0       32   	addu $s0, $t2, $0
+0x00400060  0x0c100021  jal 0x00400084        34   	jal divider
+0x00400064  0xade30000  sw $3,0($15)          36   	sw $v1, 0($t7)		#guarda o valor de v1
+0x00400068  0x3c011001  lui $1,4097           38   	la $t1, vet
+0x0040006c  0x3429000c  ori $9,$1,12               
+0x00400070  0x3c011001  lui $1,4097           39   	la $t2, n		#endere o do valor de n
+0x00400074  0x342a0000  ori $10,$1,0               
+0x00400078  0x8d4a0000  lw $10,0($10)         40   	lw $t2, 0($t2)		#coloca o valor de n em $t2
+0x0040007c  0x0c100032  jal 0x004000c8        41   	jal ordenaVetor		#entra na ordena  o do vetor
+0x00400080  0x08100062  j 0x00400188          42   	j end
+0x00400084  0x3c088000  lui $8,32768          51   divider:  lui   $t0, 0x8000       # mascara para isolar bit mais significativo
+0x00400088  0x24090020  addiu $9,$0,32        52             li    $t1, 32           # contador de iterações
+0x0040008c  0x00421026  xor $2,$2,$2          54             xor   $v0, $v0, $v0     # registrador P($v0)-A($v1) com  0 e o dividendo
+0x00400090  0x02201821  addu $3,$17,$0        55             addu   $v1, $s1, $0
+0x00400094  0x00685024  and $10,$3,$8         57   dloop:    and   $t2, $v1, $t0     # isola em t2 o bit mais significativo do registador 'A' ($v1)
+0x00400098  0x00021040  sll $2,$2,1           58             sll   $v0, $v0, 1       # desloca o registrado P-A
+0x0040009c  0x00031840  sll $3,$3,1           59             sll   $v1, $v1, 1 
+0x004000a0  0x11400001  beq $10,$0,1          61             beq   $t2, $0, di1    
+0x004000a4  0x34420001  ori $2,$2,1           62             ori   $v0, $v0, 1       # coloca 1 no bit menos significativo do registador 'P'($v0)
+0x004000a8  0x00505023  subu $10,$2,$16       64   di1:      subu   $t2, $v0, $s0     # subtrai 'P'($v0) do divisor ($s0)
+0x004000ac  0x0140082a  slt $1,$10,$0         65             blt   $t2, $0, di2
+0x004000b0  0x14200002  bne $1,$0,2                
+0x004000b4  0x01401021  addu $2,$10,$0        66             addu   $v0, $t2, $0      # se a subtração deu positiva, 'P'($v0) recebe o valor da subtração
+0x004000b8  0x34630001  ori $3,$3,1           67             ori   $v1, $v1, 1       # e 'A'($v1) recebe 1 no bit menos significativo
+0x004000bc  0x2129ffff  addi $9,$9,-1         69   di2:      addi  $t1, $t1, -1      # decrementa o número de iterações 
+0x004000c0  0x1520fff4  bne $9,$0,-12         70             bne   $t1, $0, dloop 
+0x004000c4  0x03e00008  jr $31                72             jr    $ra  
+0x004000c8  0x016b5826  xor $11,$11,$11       80   	xor $t3, $t3, $t3
+0x004000cc  0x0339c826  xor $25,$25,$25       81   	xor $t9, $t9, $t9	#endereco de vet[i]
+0x004000d0  0x0318c026  xor $24,$24,$24       82   	xor $t8, $t8, $t8	#endereco de vet[j]
+0x004000d4  0x01084026  xor $8,$8,$8          83   	xor $t0, $t0, $t0	#valor de vet[i]
+0x004000d8  0x34010000  ori $1,$0,0           84   	la $t9, 0($t1)		#pega o endereco de vet[i]
+0x004000dc  0x0121c820  add $25,$9,$1              
+0x004000e0  0x01ce7026  xor $14,$14,$14       85   	xor $t6, $t6, $t6	#valor de vet[j]
+0x004000e4  0x01ad6826  xor $13,$13,$13       86   	xor $t5, $t5, $t5	#garante que o j começa com 0
+0x004000e8  0x018c6026  xor $12,$12,$12       87   	xor $t4, $t4, $t4	#inicializa i
+0x004000ec  0x0810003c  j 0x004000f0          88   	j primeiroLoop		#entra no primeiro loop
+0x004000f0  0x0318c026  xor $24,$24,$24       92   	xor $t8, $t8, $t8		#inicializa t8	
+0x004000f4  0x118a0023  beq $12,$10,35        93   	beq $t4, $t2, retornaJal	#testa se i < n
+0x004000f8  0x3c010000  lui $1,0              94   	addu $t8, $t9, 4			#endereço de t8 = endereço de t9 + 4
+0x004000fc  0x34210004  ori $1,$1,4                
+0x00400100  0x0321c021  addu $24,$25,$1            
+0x00400104  0x8f280000  lw $8,0($25)          95   	lw $t0, 0($t9)			# t0 recebe o valor de vet[i]
+0x00400108  0x3c010000  lui $1,0              96   	addu $t5, $t4, 1 		#inicializa o j; j = i+1
+0x0040010c  0x34210001  ori $1,$1,1                
+0x00400110  0x01816821  addu $13,$12,$1            
+0x00400114  0x8f0e0000  lw $14,0($24)         97   	lw $t6, 0($t8)			# t6 recebe o valor de vet[j]
+0x00400118  0x08100047  j 0x0040011c          99   	j segundoLoop	
+0x0040011c  0x11aa000a  beq $13,$10,10        103  	beq $t5, $t2, incrementaPrimeiro	#se j == n volta pro primeiro loop
+0x00400120  0x01c8082a  slt $1,$14,$8         104  	bgt $t0, $t6, ordena			#do contrario confere se vet[i] > vet[j]; caso sim, então ordena
+0x00400124  0x14200001  bne $1,$0,1                
+0x00400128  0x08100059  j 0x00400164          105  	j incrementaSegundo			#senão incrementa
+0x0040012c  0x02108026  xor $16,$16,$16       108  	xor $s0, $s0, $s0
+0x00400130  0x01008021  addu $16,$8,$0        109  	addu $s0, $t0, $0	#aux = vet[i]
+0x00400134  0x01c04021  addu $8,$14,$0        110  	addu $t0, $t6, $0	#vet[i] = vet[j]
+0x00400138  0x02007021  addu $14,$16,$0       111  	addu $t6, $s0, $0	#vet[j] = aux
+0x0040013c  0xaf280000  sw $8,0($25)          112  	sw $t0, 0($t9)		#guarda na memoria o valor de vet[i]
+0x00400140  0xaf0e0000  sw $14,0($24)         113  	sw $t6, 0($t8)		#guarda na memoria o valor de vet[j]
+0x00400144  0x08100059  j 0x00400164          114  	j incrementaSegundo
+0x00400148  0x3c010000  lui $1,0              118  	addu $t4, $t4, 1		#incrementa o i
+0x0040014c  0x34210001  ori $1,$1,1                
+0x00400150  0x01816021  addu $12,$12,$1            
+0x00400154  0x3c010000  lui $1,0              119  	addu $t9, $t9, 4		#incrementa o endereco de memoria de vet[i]
+0x00400158  0x34210004  ori $1,$1,4                
+0x0040015c  0x0321c821  addu $25,$25,$1            
+0x00400160  0x0810003c  j 0x004000f0          120  	j primeiroLoop
+0x00400164  0x3c010000  lui $1,0              124  	addu $t5, $t5, 1		#incrementa o j
+0x00400168  0x34210001  ori $1,$1,1                
+0x0040016c  0x01a16821  addu $13,$13,$1            
+0x00400170  0x3c010000  lui $1,0              125  	addu $t8, $t8, 4		#incrementa o endere o de memoria de vet[j]
+0x00400174  0x34210004  ori $1,$1,4                
+0x00400178  0x0301c021  addu $24,$24,$1            
+0x0040017c  0x8f0e0000  lw $14,0($24)         126  	lw $t6, 0($t8)		#pega o valor de vet[j]
+0x00400180  0x08100047  j 0x0040011c          127  	j segundoLoop	
+0x00400184  0x03e00008  jr $31                129  retornaJal:	jr $ra
+0x00400188  0x2402000a  addiu $2,$0,10        136  	li $v0, 10
+0x0040018c  0x0000000c  syscall               137  	syscall
+
+Data Segment
+0x10010000    0x0000000e 0x00000000 0x00000000 0x00000007 0x00000014 0x00000008 0x00000005 0x00000001 
+0x10010020    0x00000008 0x00000004 0x00000002 0x00000005 0x00000005 0x0000000e 0x0000000c 0x00000003 
+0x10010040    0x00000008 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 
+0x10010060    0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 
