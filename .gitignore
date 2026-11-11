@@ -1,0 +1,41 @@
+# Vivado: projetos e saídas geradas
+*.cache/
+*.gen/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+*.srcs/
+*.xpr
+.Xil/
+*.jou
+*.log
+*.str
+*.bit
+*.ltx
+*.dcp
+*.wdb
+webtalk*
+vivado*.backup.*
+
+# ModelSim / Questa
+work/
+transcript
+*.wlf
+vsim.dbg
+modelsim.ini
+
+# Quartus
+db/
+incremental_db/
+output_files/
+*.qws
+*.sof
+*.pof
+
+# Editores / SO
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
